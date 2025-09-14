@@ -1,0 +1,680 @@
+openapi: 3.0.3
+info:
+  title: Selam Backend API
+  version: 1.0.0
+  description: Professional Node.js + Express + TypeScript backend for Selam Software website.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /auth/login:
+    post:
+      summary: Login as admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/AdminUser'
+        '401':
+          description: Invalid credentials
+        '400':
+          description: Validation error
+        '500':
+          description: Server error
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Token refreshed
+        '500':
+          description: Server error
+  /auth/logout:
+    post:
+      summary: Logout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Successful logout
+        '500':
+          description: Server error
+  /auth/me:
+    get:
+      summary: Get current admin profile
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/AdminUser'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /products:
+    get:
+      summary: List products
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '500':
+          description: Server error
+    post:
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+        '500':
+          description: Server error
+  /products/{id}:
+    get:
+      summary: Get product by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product data
+        '404':
+          description: Product not found
+        '500':
+          description: Server error
+    put:
+      summary: Update product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+        '500':
+          description: Server error
+    patch:
+      summary: Partially update product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+        '500':
+          description: Server error
+    delete:
+      summary: Archive product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product archived
+        '500':
+          description: Server error
+  /products/{id}/status:
+    post:
+      summary: Change product status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ACTIVE, COMING_SOON, DISCONTINUED]
+              required:
+                - status
+      responses:
+        '200':
+          description: Status changed
+        '500':
+          description: Server error
+  /jobs:
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobPosting'
+        '500':
+          description: Server error
+    post:
+      summary: Create job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPosting'
+      responses:
+        '201':
+          description: Job created
+        '500':
+          description: Server error
+  /jobs/{id}:
+    get:
+      summary: Get job by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job data
+        '404':
+          description: Job not found
+        '500':
+          description: Server error
+    put:
+      summary: Update job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPosting'
+      responses:
+        '200':
+          description: Job updated
+        '500':
+          description: Server error
+    patch:
+      summary: Partially update job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPosting'
+      responses:
+        '200':
+          description: Job updated
+        '500':
+          description: Server error
+    delete:
+      summary: Archive job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job archived
+        '500':
+          description: Server error
+  /jobs/{id}/publish:
+    post:
+      summary: Publish/unpublish job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publish:
+                  type: boolean
+              required:
+                - publish
+      responses:
+        '200':
+          description: Publish status changed
+        '500':
+          description: Server error
+  /applications/jobs/{id}/applications:
+    post:
+      summary: Submit job application
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobApplication'
+      responses:
+        '201':
+          description: Application submitted
+        '500':
+          description: Server error
+  /applications/applications:
+    get:
+      summary: List job applications
+      responses:
+        '200':
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobApplication'
+        '500':
+          description: Server error
+  /applications/applications/{id}:
+    get:
+      summary: Get job application by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Application data
+        '404':
+          description: Application not found
+        '500':
+          description: Server error
+    patch:
+      summary: Transition application status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [SUBMITTED, IN_REVIEW, SHORTLISTED, REJECTED, HIRED, WITHDRAWN]
+              required:
+                - status
+      responses:
+        '200':
+          description: Status transitioned
+        '500':
+          description: Server error
+  /contact:
+    post:
+      summary: Submit contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactMessage'
+      responses:
+        '201':
+          description: Message submitted
+        '500':
+          description: Server error
+  /contact/messages:
+    get:
+      summary: List contact messages
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContactMessage'
+        '500':
+          description: Server error
+  /contact/messages/{id}:
+    get:
+      summary: Get contact message by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message data
+        '404':
+          description: Message not found
+        '500':
+          description: Server error
+  /contact/messages/{id}/status:
+    patch:
+      summary: Update contact message status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [NEW, IN_PROGRESS, RESOLVED, DISMISSED]
+                handlerId:
+                  type: string
+              required:
+                - status
+      responses:
+        '200':
+          description: Status updated
+        '500':
+          description: Server error
+  /audit-logs:
+    get:
+      summary: List audit logs
+      responses:
+        '200':
+          description: List of audit logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLog'
+        '500':
+          description: Server error
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+components:
+  schemas:
+    AdminUser:
+      type: object
+      properties:
+        email:
+          type: string
+        displayName:
+          type: string
+        role:
+          type: string
+        isActive:
+          type: boolean
+    Product:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        shortDescription:
+          type: string
+        longDescription:
+          type: string
+        features:
+          type: array
+          items:
+            type: string
+        priceModel:
+          type: string
+        status:
+          type: string
+        heroImageUrl:
+          type: string
+        gallery:
+          type: array
+          items:
+            type: string
+        rating:
+          type: number
+        usersCount:
+          type: number
+        isArchived:
+          type: boolean
+    JobPosting:
+      type: object
+      properties:
+        title:
+          type: string
+        department:
+          type: string
+        location:
+          type: string
+        employmentType:
+          type: string
+        description:
+          type: string
+        requirements:
+          type: array
+          items:
+            type: string
+        responsibilities:
+          type: array
+          items:
+            type: string
+        compensationRange:
+          type: string
+        isPublished:
+          type: boolean
+        isArchived:
+          type: boolean
+        publishAt:
+          type: string
+        closeAt:
+          type: string
+    JobApplication:
+      type: object
+      properties:
+        jobId:
+          type: string
+        candidateName:
+          type: string
+        candidateEmail:
+          type: string
+        candidatePhone:
+          type: string
+        coverLetter:
+          type: string
+        resumeUrl:
+          type: string
+        linkedinUrl:
+          type: string
+        portfolioUrl:
+          type: string
+        status:
+          type: string
+        reviewedAt:
+          type: string
+        reviewerId:
+          type: string
+    ContactMessage:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        subject:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+        handledById:
+          type: string
+        handledAt:
+          type: string
+    AuditLog:
+      type: object
+      properties:
+        actorId:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        action:
+          type: string
+        metadata:
+          type: object
+        createdAt:
+          type: string

@@ -3,6 +3,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 import { json } from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import authRouter from './api/auth';
 import productsRouter from './api/products';
 import jobsRouter from './api/jobs';
@@ -12,6 +14,10 @@ import auditRouter from './api/audit';
 
 
 const app = express();
+
+// Swagger UI setup
+const swaggerDocument = YAML.load('./swagger.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(helmet());
 app.use(cors());

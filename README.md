@@ -12,6 +12,7 @@ Professional Node.js + Express + TypeScript backend for Selam Software website.
 - Dockerized for deployment
 
 
+
 # Quick Start
 
 ```bash
@@ -22,12 +23,16 @@ npm install
 # Copy environment variables
 cp .env.example .env
 
-# Prisma generate (no migrate for MongoDB)
-npx prisma generate
-
 # Run dev server
 npm run dev
 ```
+
+## API Documentation
+
+- Interactive Swagger UI: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+- OpenAPI spec: `swagger.yaml` in project root
+
+All endpoints, request/response schemas, and error codes are documented in Swagger UI.
 
 ## Folder Structure
 
