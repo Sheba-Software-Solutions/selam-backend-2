@@ -1,6 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { AuthService } from '../services/authService';
 import { AdminUserRepository } from '../repositories/adminUserRepo';
+import { loginSchema } from '../common/validation/auth';
+import logger from '../infra/logger';
+import type pino from 'pino';
+const typedLogger: pino.Logger = logger;
 
 const router = Router();
 const authService = new AuthService(new AdminUserRepository());
@@ -8,11 +12,19 @@ const authService = new AuthService(new AdminUserRepository());
 // POST /api/v1/auth/login
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const user = await authService.login(req.body.email, req.body.password);
+    // Validate request body
+    const parseResult = loginSchema.safeParse(req.body);
+    if (!parseResult.success) {
+  typedLogger.warn({ issues: parseResult.error.issues }, 'Login validation failed');
+  return res.status(400).json({ success: false, error: { message: 'Invalid request', details: parseResult.error.issues } });
+    }
+    const { email, password } = parseResult.data;
+    const user = await authService.login(email, password);
     if (!user) return res.status(401).json({ success: false, error: { message: 'Invalid credentials' } });
     res.json({ success: true, data: user });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: 'Failed to login' } });
+  typedLogger.error({ err }, 'Login error');
+  res.status(500).json({ success: false, error: { message: 'Failed to login', details: err instanceof Error ? err.message : err } });
   }
 });
 
