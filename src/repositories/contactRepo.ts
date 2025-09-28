@@ -2,7 +2,9 @@ import { ContactMessage, ContactStatus } from '../models/ContactMessage';
 
 export class ContactRepository {
   async submit(data: any) {
-    return ContactMessage.create(data);
+    // Accept firstName, lastName, phone, email, subject, message and store as separate fields
+    const { firstName, lastName, email, phone, subject, message } = data;
+    return ContactMessage.create({ firstName, lastName, email, phone, subject, message });
   }
 
   async list(filter: any, pagination: any) {
