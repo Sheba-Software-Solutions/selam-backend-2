@@ -28,7 +28,11 @@ app.use(json());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/products', productsRouter);
 app.use('/api/v1/jobs', jobsRouter);
-app.use('/api/v1/applications', applicationsRouter);
+// applicationsRouter defines routes like '/applications' and '/jobs/:id/applications'.
+// Mount it at the base '/api/v1' so those routes resolve to '/api/v1/applications' and
+// '/api/v1/jobs/:id/applications' (previously this was mounted at '/api/v1/applications'
+// which produced '/api/v1/applications/applications').
+app.use('/api/v1', applicationsRouter);
 app.use('/api/v1/contact', contactRouter);
 app.use('/api/v1/audit-logs', auditRouter);
 
